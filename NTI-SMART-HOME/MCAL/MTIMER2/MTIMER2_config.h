@@ -1,0 +1,39 @@
+/*
+ * MTIM2_config.h
+ *
+ *  NTI GRADUATION PROJECT "SMART HOME SYSTEM "
+ *
+ *  	 Authors: 1- Hassan Abdelazim Abdelsalam
+ *	    	 	  2- Abdelrahman Dardeer
+ *
+ */
+
+#ifndef MTIMER2_MTIMER2_CONFIG_H_
+#define MTIMER2_MTIMER2_CONFIG_H_
+
+/*
+ * Please Configure TIMER0 MODE:
+ * 		TIMER2_MODE_NORMAL
+ * 		TIMER2_MODE_CTC
+ * 		TIMER2_MODE_FAST_PWM
+ * 		TIMER2_MODE_PHASE_CORRECT_PWM
+ */
+#define TIMER2_MODE 		TIMER2_MODE_NORMAL
+
+/*
+ * Please, Configure TIMER1 CLK:
+ *
+ * TIMER2_NO_CLK
+ * TIMER2_PRESCALER_1
+ * TIMER2_PRESCALER_8
+ * TIMER2_PRESCALER_64
+ * TIMER2_PRESCALER_256
+ * TIMER2_PRESCALER_1024
+ *
+ * TIMER2_EXT_CLK_FALL_EDGE
+ * TIMER2_EXT_CLK_RISE_EDGE
+ *
+ * */
+#define TIMER2_CLK 			TIMER2_PRESCALER_1024
+
+#endif /* MTIM2_MTIM2_CONFIG_H_ */
