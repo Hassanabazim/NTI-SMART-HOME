@@ -188,8 +188,18 @@ class Database:
     
     def soft_delete(self, table_name: str, record_id: int, old_data: str = ""):
         """Soft delete a record and log to audit"""
+        # Whitelist of allowed tables for security
+        allowed_tables = [
+            'parts', 'car_brands', 'car_models', 'daily_expenses',
+            'suppliers', 'supplier_transactions', 'part_alternatives', 'sales'
+        ]
+        
+        if table_name not in allowed_tables:
+            print(f"Security error: Table '{table_name}' not allowed for soft delete")
+            return False
+        
         try:
-            # Mark as deleted
+            # Mark as deleted (table_name validated above)
             query = f"UPDATE {table_name} SET is_deleted = 1 WHERE id = ?"
             self.cursor.execute(query, (record_id,))
             

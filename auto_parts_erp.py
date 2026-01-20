@@ -1621,6 +1621,12 @@ class RestoreWidget(QWidget):
             
             total_records = 0
             
+            # Whitelist of allowed tables for import
+            allowed_tables = [
+                'parts', 'car_brands', 'car_models', 'daily_expenses',
+                'suppliers', 'supplier_transactions', 'part_alternatives', 'sales'
+            ]
+            
             for table in tables:
                 table_name = table[0]
                 
@@ -1628,22 +1634,28 @@ class RestoreWidget(QWidget):
                 if table_name.startswith('sqlite_'):
                     continue
                 
+                # Security: Only import allowed tables
+                if table_name not in allowed_tables:
+                    self.log(f"تخطي جدول غير مسموح به: {table_name}")
+                    continue
+                
                 try:
-                    # Get all records from table
+                    # Get all records from table (table_name validated above)
                     source_cursor.execute(f"SELECT * FROM {table_name}")
                     records = source_cursor.fetchall()
                     
-                    # Get column names
+                    # Get column names (table_name validated above)
                     source_cursor.execute(f"PRAGMA table_info({table_name})")
                     columns = [col[1] for col in source_cursor.fetchall()]
                     
                     # Try to insert into our database
                     # This is a simple approach - may need mapping
                     for record in records:
-                        # Check if table exists in our schema
-                        check_table = f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}'"
-                        if self.db.execute_query(check_table):
+                        # Check if table exists in our schema (using parameterized query)
+                        check_table = "SELECT name FROM sqlite_master WHERE type='table' AND name=?"
+                        if self.db.execute_query(check_table, (table_name,)):
                             placeholders = ','.join(['?' for _ in record])
+                            # table_name is validated from whitelist, safe to use in f-string
                             insert_query = f"INSERT OR IGNORE INTO {table_name} VALUES ({placeholders})"
                             self.db.execute_update(insert_query, record)
                             total_records += 1
